@@ -1,0 +1,42 @@
+import pandas as pd
+from scipy.stats import chi2_contingency
+
+info = pd.read_csv("studentInfo.csv")
+
+DEMO_COLS = ["gender", "age_band", "disability", "imd_band", "highest_education", "region"]
+
+print("Συνολικοί φοιτητές:", len(info))
+print("Κατανομή τελικής έκβασης:")
+print(info.final_result.value_counts())
+print()
+
+results = []
+for col in DEMO_COLS:
+    # Πίνακας συνάφειας: δημογραφική κατηγορία x τελική έκβαση
+    ct = pd.crosstab(info[col], info["final_result"])
+    chi2, p, dof, expected = chi2_contingency(ct)
+
+    # Ποσοστό (%) ανά κατηγορία-έκβαση, για ερμηνεία
+    pct = pd.crosstab(info[col], info["final_result"], normalize="index") * 100
+    pct = pct.round(1)
+
+    print(f"=== {col} ===")
+    print("Αριθμός κατηγοριών:", ct.shape[0], " chi2 =", round(chi2, 1), " p =", p)
+    print(pct)
+    print()
+
+    results.append({"variable": col, "n_categories": ct.shape[0], "chi2": chi2, "p_value": p, "dof": dof})
+
+summary = pd.DataFrame(results)
+summary.to_csv("demographics_summary.csv", index=False)
+
+# Αναλυτικά ποσοστά ανά μεταβλητή, σε ξεχωριστό αρχείο
+all_pct = []
+for col in DEMO_COLS:
+    pct = pd.crosstab(info[col], info["final_result"], normalize="index") * 100
+    pct = pct.round(1).reset_index().rename(columns={col: "category"})
+    pct.insert(0, "variable", col)
+    all_pct.append(pct)
+pd.concat(all_pct, ignore_index=True).to_csv("demographics_percentages.csv", index=False)
+
+print("Έτοιμο. Αρχεία: demographics_summary.csv, demographics_percentages.csv")
