@@ -1,8 +1,22 @@
 import pandas as pd
 import pm4py
+import pickle
+import os
+
+# Πείραμα σύγκρισης: discovery ΧΩΡΙΣ noise threshold, για το ενδεικτικό μάθημα
+# AAA-2014J. Χρησιμοποιείται στο Κεφάλαιο 4 για να δικαιολογήσει την επιλογή
+# noise_threshold=0.2 στο production script (discover_all.py), συγκρίνοντας
+# το μέγεθος/πολυπλοκότητα του μοντέλου με και χωρίς φιλτράρισμα θορύβου.
 
 MODULE, PRES = "AAA", "2014J"
-df = pd.read_csv(f"event_log_{MODULE}_{PRES}_weekly.csv")
+
+DATA = "../../data/processed"
+MODELS_OUT = "../../results/models"
+FIGS_OUT = "../../results/figures"
+os.makedirs(MODELS_OUT, exist_ok=True)
+os.makedirs(FIGS_OUT, exist_ok=True)
+
+df = pd.read_csv(f"{DATA}/event_log_{MODULE}_{PRES}_weekly.csv")
 
 results = {}
 for outcome in ["Pass", "Fail"]:
@@ -21,11 +35,12 @@ for outcome in ["Pass", "Fail"]:
                                   timestamp_key="time:timestamp")
     event_log = pm4py.convert_to_event_log(log)
 
-    net, im, fm = pm4py.discover_petri_net_inductive(event_log)
-    print(f"--- {outcome} ---")
+    net, im, fm = pm4py.discover_petri_net_inductive(event_log)  # χωρίς noise_threshold
+    print(f"--- {outcome} (no noise filtering) ---")
     print("Θέσεις (places):", len(net.places), " Μεταβάσεις (transitions):", len(net.transitions))
 
-    pm4py.save_vis_petri_net(net, im, fm, f"petri_{outcome}.png")
+    img_name = f"{FIGS_OUT}/petri_{outcome}_{MODULE}_{PRES}_nonoise.png"
+    pm4py.save_vis_petri_net(net, im, fm, img_name)
 
     fitness = pm4py.fitness_token_based_replay(event_log, net, im, fm)
     precision = pm4py.precision_token_based_replay(event_log, net, im, fm)
@@ -35,7 +50,6 @@ for outcome in ["Pass", "Fail"]:
 
     results[outcome] = {"net": net, "im": im, "fm": fm, "log": event_log}
 
-import pickle
-with open(f"models_{MODULE}_{PRES}.pkl", "wb") as f:
+with open(f"{MODELS_OUT}/models_{MODULE}_{PRES}_nonoise.pkl", "wb") as f:
     pickle.dump(results, f)
-print("Μοντέλα αποθηκευμένα.")
+print("Μοντέλα αποθηκευμένα (χωρίς noise filtering, για σύγκριση με discover_all.py).")
