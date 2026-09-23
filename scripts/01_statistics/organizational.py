@@ -1,9 +1,14 @@
 import pandas as pd
 from scipy.stats import mannwhitneyu
+import os
 
-vle = pd.read_csv("vle.csv")
-info = pd.read_csv("studentInfo.csv")
-svle = pd.read_csv("studentVle.csv")
+RAW = "../../data/raw"
+OUT = "../../results/statistics"
+os.makedirs(OUT, exist_ok=True)
+
+vle = pd.read_csv(f"{RAW}/vle.csv")
+info = pd.read_csv(f"{RAW}/studentInfo.csv")
+svle = pd.read_csv(f"{RAW}/studentVle.csv")
 
 results = []
 courses = info[["code_module", "code_presentation"]].drop_duplicates().values.tolist()
@@ -34,5 +39,5 @@ for module, pres in courses:
     })
 
 summary = pd.DataFrame(results)
-summary.to_csv("organizational_summary.csv", index=False)
+summary.to_csv(f"{OUT}/organizational_summary.csv", index=False)
 print(summary.to_string(index=False))

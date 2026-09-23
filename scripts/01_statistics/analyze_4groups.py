@@ -1,9 +1,14 @@
 import pandas as pd
-from scipy.stats import kruskal, mannwhitneyu
+from scipy.stats import kruskal
+import os
 
-vle = pd.read_csv("vle.csv")
-info = pd.read_csv("studentInfo.csv")
-svle = pd.read_csv("studentVle.csv")
+RAW = "../../data/raw"
+OUT = "../../results/statistics"
+os.makedirs(OUT, exist_ok=True)
+
+vle = pd.read_csv(f"{RAW}/vle.csv")
+info = pd.read_csv(f"{RAW}/studentInfo.csv")
+svle = pd.read_csv(f"{RAW}/studentVle.csv")
 
 courses = info[["code_module", "code_presentation"]].drop_duplicates().values.tolist()
 GROUPS = ["Distinction", "Pass", "Withdrawn", "Fail"]
@@ -38,5 +43,5 @@ for module, pres in courses:
                          "n": None, "mean_clicks": None, "median_clicks": p})
 
 summary = pd.DataFrame(results)
-summary.to_csv("all_courses_4groups_summary.csv", index=False)
+summary.to_csv(f"{OUT}/all_courses_4groups_summary.csv", index=False)
 print(summary.to_string(index=False))

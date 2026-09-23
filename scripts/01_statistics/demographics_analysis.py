@@ -1,7 +1,12 @@
 import pandas as pd
 from scipy.stats import chi2_contingency
+import os
 
-info = pd.read_csv("studentInfo.csv")
+RAW = "../../data/raw"
+OUT = "../../results/statistics"
+os.makedirs(OUT, exist_ok=True)
+
+info = pd.read_csv(f"{RAW}/studentInfo.csv")
 
 DEMO_COLS = ["gender", "age_band", "disability", "imd_band", "highest_education", "region"]
 
@@ -28,7 +33,7 @@ for col in DEMO_COLS:
     results.append({"variable": col, "n_categories": ct.shape[0], "chi2": chi2, "p_value": p, "dof": dof})
 
 summary = pd.DataFrame(results)
-summary.to_csv("demographics_summary.csv", index=False)
+summary.to_csv(f"{OUT}/demographics_summary.csv", index=False)
 
 # Αναλυτικά ποσοστά ανά μεταβλητή, σε ξεχωριστό αρχείο
 all_pct = []
@@ -37,6 +42,6 @@ for col in DEMO_COLS:
     pct = pct.round(1).reset_index().rename(columns={col: "category"})
     pct.insert(0, "variable", col)
     all_pct.append(pct)
-pd.concat(all_pct, ignore_index=True).to_csv("demographics_percentages.csv", index=False)
+pd.concat(all_pct, ignore_index=True).to_csv(f"{OUT}/demographics_percentages.csv", index=False)
 
-print("Έτοιμο. Αρχεία: demographics_summary.csv, demographics_percentages.csv")
+print(f"Έτοιμο. Αρχεία στο {OUT}/: demographics_summary.csv, demographics_percentages.csv")

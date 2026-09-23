@@ -1,5 +1,10 @@
 import pandas as pd
 from scipy.stats import mannwhitneyu, rankdata
+import os
+
+RAW = "../../data/raw"
+OUT = "../../results/statistics"
+os.makedirs(OUT, exist_ok=True)
 
 def cliffs_delta(x, y):
     nx, ny = len(x), len(y)
@@ -8,9 +13,9 @@ def cliffs_delta(x, y):
     auc = (rx - nx*(nx+1)/2) / (nx*ny)
     return 2*auc - 1
 
-vle = pd.read_csv("vle.csv")
-info = pd.read_csv("studentInfo.csv")
-svle = pd.read_csv("studentVle.csv")
+vle = pd.read_csv(f"{RAW}/vle.csv")
+info = pd.read_csv(f"{RAW}/studentInfo.csv")
+svle = pd.read_csv(f"{RAW}/studentVle.csv")
 
 courses = info[["code_module", "code_presentation"]].drop_duplicates().values.tolist()
 
@@ -42,5 +47,5 @@ for module, pres in courses:
         })
 
 summary = pd.DataFrame(results)
-summary.to_csv("pairwise_4groups_summary.csv", index=False)
+summary.to_csv(f"{OUT}/pairwise_4groups_summary.csv", index=False)
 print(summary.groupby("pair")["cliffs_delta"].describe())
