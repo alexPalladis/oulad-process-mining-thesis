@@ -1,6 +1,10 @@
 import pandas as pd
 
-df = pd.read_csv("event_log_AAA_2014J.csv", parse_dates=["timestamp"])
+# --- Ποιο μάθημα να ελέγξουμε (ενδεικτική επικύρωση, όχι πλήρες τρέξιμο) ---
+MODULE, PRES = "AAA", "2014J"
+
+DATA = "../../data/processed"
+df = pd.read_csv(f"{DATA}/event_log_{MODULE}_{PRES}_daily.csv", parse_dates=["timestamp"])
 
 # Πόσοι φοιτητές, πόσα clicks συνολικά, μέσος όρος ανά φοιτητή
 summary = df.groupby("final_result").agg(
