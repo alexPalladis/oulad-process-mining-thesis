@@ -1,0 +1,19 @@
+Operators: -> sequence, X choice, + parallel, * loop, tau silent
+
+=== AAA-2014J / Pass / noise 0.0 ===
++( X( tau, *( 'dataplus', tau ) ), X( tau, *( 'url', tau ) ), *( 'resource', tau ), *( 'subpage', tau ), X( tau, *( 'forumng', tau ) ), *( ->( 'homepage', X( tau, *( 'oucontent', tau ) ) ), tau ), X( tau, +( X( tau, *( 'oucollaborate', tau ) ), X( tau, *( 'glossary', tau ) ), ->( X( tau, 'submit_TMA1' ), X( tau, 'submit_TMA2' ), X( tau, 'submit_TMA3' ), X( tau, 'submit_TMA4' ), X( tau, 'submit_TMA5' ) ) ) ) )
+
+=== AAA-2014J / Pass / noise 0.1 ===
++( X( tau, *( 'dataplus', tau ) ), *( 'url', tau ), X( tau, *( 'oucollaborate', tau ) ), *( 'resource', tau ), *( 'subpage', tau ), *( 'forumng', tau ), X( tau, *( 'glossary', tau ) ), ->( 'submit_TMA1', 'submit_TMA2', 'submit_TMA3', 'submit_TMA4', 'submit_TMA5' ), *( ->( 'homepage', X( tau, *( 'oucontent', tau ) ) ), tau ) )
+
+=== AAA-2014J / Pass / noise 0.2 ===
++( X( tau, *( 'dataplus', tau ) ), *( 'url', tau ), X( tau, *( 'oucollaborate', tau ) ), *( 'resource', tau ), *( 'subpage', tau ), *( 'forumng', tau ), X( tau, *( 'glossary', tau ) ), ->( 'submit_TMA1', 'submit_TMA2', 'submit_TMA3', 'submit_TMA4', 'submit_TMA5' ), *( ->( 'homepage', X( tau, *( 'oucontent', tau ) ) ), tau ) )
+
+=== BBB-2013J / Pass / noise 0.0 ===
++( X( tau, *( 'resource', tau ) ), X( tau, *( 'forumng', tau ) ), *( 'homepage', tau ), X( tau, *( 'quiz', tau ) ), X( tau, +( X( tau, *( 'url', tau ) ), *( 'subpage', tau ) ) ), X( tau, *( 'oucontent', tau ) ), X( tau, +( X( tau, *( 'oucollaborate', tau ) ), X( tau, *( 'glossary', tau ) ), *( ->( +( X( tau, 'submit_TMA5' ), X( tau, ->( X( tau, +( X( tau, 'submit_CMA1' ), X( tau, 'submit_TMA1' ) ) ), X( tau, 'submit_TMA2', 'submit_CMA2', ->( X( tau, 'submit_TMA4', 'sharedsubpage', 'submit_CMA3', 'submit_CMA4' ), X( tau, +( X( tau, 'submit_TMA6' ), X( tau, 'submit_CMA5' ) ) ) ) ) ) ) ), X( tau, 'submit_TMA3' ) ), tau ) ) ) )
+
+=== BBB-2013J / Pass / noise 0.1 ===
++( *( 'url', tau ), X( tau, *( 'oucollaborate', tau ) ), *( 'resource', tau ), *( 'subpage', tau ), *( 'forumng', tau ), *( 'homepage', tau ), X( tau, *( 'glossary', tau ) ), *( 'quiz', tau ), *( 'oucontent', tau ), ->( X( tau, *( 'sharedsubpage', tau ) ), +( 'submit_TMA2', 'submit_CMA1', 'submit_TMA1' ), +( 'submit_TMA3', 'submit_CMA2' ), +( 'submit_TMA4', 'submit_CMA3' ), +( 'submit_TMA5', 'submit_CMA4' ), X( tau, 'submit_TMA6' ), 'submit_CMA5' ) )
+
+=== BBB-2013J / Pass / noise 0.2 ===
++( *( 'url', tau ), X( tau, *( 'oucollaborate', tau ) ), *( 'resource', tau ), *( 'subpage', tau ), *( 'forumng', tau ), *( 'homepage', tau ), X( tau, *( 'glossary', tau ) ), *( 'quiz', tau ), *( 'oucontent', tau ), ->( X( tau, *( 'sharedsubpage', tau ) ), +( 'submit_TMA2', 'submit_CMA1', 'submit_TMA1' ), 'submit_TMA3', +( 'submit_TMA4', ->( 'submit_CMA2', 'submit_CMA3' ) ), +( 'submit_TMA5', 'submit_CMA4' ), +( 'submit_TMA6', 'submit_CMA5' ) ) )

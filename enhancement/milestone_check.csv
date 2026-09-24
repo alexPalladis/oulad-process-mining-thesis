@@ -1,0 +1,7 @@
+course,noise,traces,tma_milestones_total,tma_milestones_in_model,all_tma_present,places,transitions,fitness_tbr_avg
+AAA-2014J,0.0,229,5,5,True,39,51,
+AAA-2014J,0.1,229,5,5,True,33,37,
+AAA-2014J,0.2,229,5,5,True,33,37,0.997
+BBB-2013J,0.0,896,6,6,True,55,77,
+BBB-2013J,0.1,896,6,6,True,49,48,
+BBB-2013J,0.2,896,6,6,True,47,45,0.983
