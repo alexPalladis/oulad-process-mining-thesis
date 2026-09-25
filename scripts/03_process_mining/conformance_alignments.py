@@ -4,7 +4,6 @@ import pandas as pd
 import pm4py
 from scipy.stats import wilcoxon
 
-# Τρέξε το από τον ίδιο φάκελο με το conformance_all.py (χρησιμοποιεί τα .pkl του discover_all.py)
 MODELS = "../../results/models"
 OUT = "../../results/statistics"
 COURSES = [("AAA", "2014J"), ("BBB", "2013J")]
@@ -15,7 +14,7 @@ for MODULE, PRES in COURSES:
     with open(f"{MODELS}/models_{MODULE}_{PRES}_noise.pkl", "rb") as f:
         models = pickle.load(f)
 
-    per_trace = {}  # (log_group, model_group) -> λίστα fitness ανά trace
+    per_trace = {}  # (log_group, model_group) -> list fitness per trace
     for log_group in GROUPS:
         for model_group in GROUPS:
             log = models[log_group]["log"]
@@ -37,7 +36,7 @@ for MODULE, PRES in COURSES:
             })
             print(rows[-1])
 
-    # Για κάθε log: ίδια traces σε δικό τους μοντέλο έναντι μοντέλου της άλλης ομάδας (paired test)
+   # paired comparison: same traces on own vs other group's model
     for log_group in GROUPS:
         other = [g for g in GROUPS if g != log_group][0]
         own = per_trace[(log_group, log_group)]

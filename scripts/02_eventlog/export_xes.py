@@ -2,10 +2,8 @@ import pandas as pd
 import pm4py
 import os
 
-# ====== ΑΛΛΑΞΕ ΕΔΩ ΤΙ ΘΕΣ ======
-MODULE, PRES = "BBB", "2013J"          # ποιο μάθημα
-GROUPS = ["Pass", "Fail"]               # ποιες ομάδες (πρόσθεσε "Distinction", "Withdrawn" αν θες)
-# ================================
+MODULE, PRES = "BBB", "2013J"        
+GROUPS = ["Pass", "Fail"]           
 
 DATA = "../../data/processed"
 OUT = "../../data/XES for ProM"

@@ -1,42 +1,7 @@
-"""
-daily_flower_check.py  --  έλεγχος ευστάθειας για το "flower model" του Κεφ. 4
-
-Ερώτημα: η παράλληλη ("λουλουδένια") δομή των μοντέλων του Κεφ. 4 οφείλεται
-στην εβδομαδιαία κλίμακα του event log (όπου η σειρά μέσα στην εβδομάδα δεν
-είναι παρατηρήσιμη) ή στη συμπεριφορά των φοιτητών;
-
-Τι κάνει
---------
-1. Φτιάχνει ΗΜΕΡΗΣΙΟ event log για AAA-2014J και BBB-2013J, Pass και Fail:
-   ένα γεγονός ανά (φοιτητή, activity_type, ημέρα), ταξινομημένο ανά ημέρα.
-   Οι επαναλήψεις σε διαφορετικές ημέρες ΔΕΝ συμπτύσσονται.
-   Η σειρά μέσα στην ίδια ημέρα δεν είναι παρατηρήσιμη στο OULAD, οπότε
-   ανακατεύεται τυχαία (σταθερό seed) αντί για αλφαβητικά, ώστε να μη
-   δημιουργείται τεχνητή σταθερή σειρά.
-2. Ανακαλύπτει μοντέλο με Inductive Miner (ίδιο με Κεφ. 4) για κάθε ομάδα,
-   με noise threshold 0.0, 0.1, 0.2 και 0.3. ΔΕΝ υπολογίζει precision ή
-   alignments (εκεί ήταν η υπολογιστική "έκρηξη" του Κεφ. 4.1) -- μόνο τη δομή.
-3. Μετράει πόσο "λουλούδι" είναι κάθε μοντέλο:
-     flower_share = ποσοστό των δραστηριοτήτων που βρίσκονται σε βρόχο
-                    μέσα σε παράλληλο κόμβο (όπως στα μοντέλα του Κεφ. 4)
-     n_seq        = πόσοι κόμβοι "sequence" υπάρχουν (δείκτης αυστηρής σειράς)
-4. Ανεξάρτητα από μοντέλα: μετράει αν υπάρχει ΣΤΑΘΕΡΗ ΣΕΙΡΑ ανάμεσα στις
-   δραστηριότητες, κοιτώντας ΜΟΝΟ διαδοχές ανάμεσα σε ΔΙΑΦΟΡΕΤΙΚΕΣ ημέρες
-   (όπου η σειρά είναι πραγματική). Για κάθε ζεύγος (a, b) υπολογίζει το
-   dependency measure του Heuristic Miner (Παράρτημα B.3):
-     dep = (|a>b| - |b>a|) / (|a>b| + |b>a| + 1)
-   Κοντά στο 0 = καμία σταθερή σειρά· κοντά στο ±1 = σταθερή σειρά.
-
-Έξοδοι (results/process_mining/daily_check/)
---------------------------------------------
-  daily_models_summary.csv     δομή μοντέλων ανά μάθημα / ομάδα / threshold
-  daily_order_summary.csv      σταθερότητα σειράς ανά μάθημα / ομάδα
-  daily_order_pairs.csv        dependency ανά ζεύγος δραστηριοτήτων
-  daily_trees.txt              τα process trees σε κείμενο
-  daily_model_<course>_<group>.png   Petri net στο threshold 0.2
-
-Τρέξε το από οπουδήποτε μέσα στο repo:  python daily_flower_check.py
-"""
+"""Robustness check for Section 4.2: rediscovers the Pass and Fail models from a
+daily event log (same-day order randomized) and computes the heuristic
+dependency measure for transitions between different days.
+Output: results/process_mining/daily_check/"""
 import os
 import sys
 from pathlib import Path
@@ -47,9 +12,8 @@ import pandas as pd
 import pm4py
 from pm4py.objects.process_tree.obj import Operator
 
-# ----------------------------------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = None      # π.χ. Path(r"C:\Users\Alex\Desktop\thesis_oulad\data\raw")
+RAW_DIR = None    
 OUT_DIR = REPO_ROOT / "results" / "process_mining" / "daily_check"
 
 COURSES = [("AAA", "2014J"), ("BBB", "2013J")]
@@ -57,12 +21,11 @@ GROUPS = ["Pass", "Fail"]
 NOISE = [0.0, 0.1, 0.2, 0.3]
 FIG_NOISE = 0.2
 SEED = 42
-MIN_PAIR_SUPPORT = 30       # ελάχιστες διαδοχές για να μετρήσει ένα ζεύγος
-STRONG_DEP = 0.5            # |dep| >= 0.5 θεωρείται σταθερή σειρά
+MIN_PAIR_SUPPORT = 30     
+STRONG_DEP = 0.5          
 CHUNK_SIZE = 2_000_000
 BASE_DATE = pd.Timestamp("2014-01-01")
 
-# ----------------------------------------------------------------------------
 if RAW_DIR is None:
     hits = [p.parent for p in REPO_ROOT.rglob("studentInfo.csv") if "results" not in p.parts]
     if not hits:
@@ -114,7 +77,6 @@ def tree_stats(tree):
         if node.operator is None:
             if node.label:
                 labels.add(node.label)
-                # φύλλο κατευθείαν κάτω από parallel ή πρώτο παιδί βρόχου κάτω από parallel
                 if parent is not None and parent.operator == Operator.PARALLEL:
                     flower.add(node.label)
             return

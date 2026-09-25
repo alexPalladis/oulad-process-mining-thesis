@@ -24,14 +24,12 @@ print()
 
 results = []
 for col in DEMO_COLS:
-    # Πίνακας συνάφειας: δημογραφική κατηγορία x τελική έκβαση
     ct = pd.crosstab(info[col], info["final_result"])
     chi2, p, dof, expected = chi2_contingency(ct)
 
     n = ct.values.sum()
     v = cramers_v(chi2, n, ct.shape)
 
-    # Ποσοστό (%) ανά κατηγορία-έκβαση, για ερμηνεία
     pct = pd.crosstab(info[col], info["final_result"], normalize="index") * 100
     pct = pct.round(1)
 
@@ -50,7 +48,6 @@ for col in DEMO_COLS:
 summary = pd.DataFrame(results)
 summary.to_csv(f"{OUT}/demographics_summary.csv", index=False)
 
-# Αναλυτικά ποσοστά ανά μεταβλητή, σε ξεχωριστό αρχείο
 all_pct = []
 for col in DEMO_COLS:
     pct = pd.crosstab(info[col], info["final_result"], normalize="index") * 100

@@ -17,7 +17,6 @@ for module, pres in courses:
     a_c = assessments[(assessments.code_module == module) & (assessments.code_presentation == pres)]
     info_c = info[(info.code_module == module) & (info.code_presentation == pres)]
 
-    # Πρώτη αξιολόγηση κάθε φοιτητή (μικρότερο date_submitted)
     sa = studentAssessment.merge(a_c[["id_assessment"]], on="id_assessment", how="inner")
     first_sub = sa.groupby("id_student")["date_submitted"].min().reset_index()
     first_sub = first_sub.merge(info_c[["id_student", "final_result"]], on="id_student", how="inner")

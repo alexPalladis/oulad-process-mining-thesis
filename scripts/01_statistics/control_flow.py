@@ -34,7 +34,7 @@ for module, pres in courses:
     pas = per_student[per_student.final_result == "Pass"]["sum_click"]
 
     if len(fail) < 5 or len(pas) < 5:
-        continue  # πολύ μικρό δείγμα, παράλειψέ το
+        continue
 
     _, p = mannwhitneyu(fail, pas)
     delta = cliffs_delta(pas, fail)

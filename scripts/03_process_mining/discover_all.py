@@ -3,13 +3,9 @@ import pm4py
 import pickle
 import os
 
-# ====== ΑΛΛΑΞΕ ΕΔΩ ΤΙ ΘΕΣ ======
-COURSES = [("AAA", "2014J"), ("BBB", "2013J")]   # πρόσθεσε κι άλλα ζεύγη αν θες
-GROUPS = ["Pass", "Fail"]                          # πρόσθεσε "Distinction", "Withdrawn" αν θες
+COURSES = [("AAA", "2014J"), ("BBB", "2013J")]   
+GROUPS = ["Pass", "Fail"]                          
 NOISE_THRESHOLD = 0.2
-# ================================
-# ΠΡΟΣΟΧΗ: κάθε επιπλέον μάθημα/ομάδα = επιπλέον χρόνος εκτέλεσης.
-# Δοκίμασε πρώτα με 1-2, πριν βάλεις όλα τα 22.
 
 DATA = "../../data/processed"
 MODELS_OUT = "../../results/models"

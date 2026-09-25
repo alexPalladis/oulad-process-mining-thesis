@@ -1,34 +1,7 @@
-"""
-discover_milestone_model.py  --  Chapter 6, step 1 of 2
-
-Builds the enriched event log of each course and discovers the process model
-of Pass students that is enhanced in Chapter 6.
-
-Enriched event log (differences from the Chapter 4-5 log)
----------------------------------------------------------
-  - VLE events per (student, activity_type, week), as in Chapter 4, but
-    consecutive repetitions are NOT collapsed.
-  - Event timestamp = first day on which that activity type was accessed in
-    that week (so the order within a week is no longer arbitrary).
-  - Assessment submissions are added as milestone events "submit_<TYPE><n>"
-    (n = order by deadline within the type). Banked submissions and exams
-    (no deadline date in assessments.csv) are excluded.
-  - Same-day ties: VLE events before submissions, then alphabetical.
-
-Model
------
-Inductive Miner (PM4Py) on the Pass log, noise threshold 0.2 as in Chapter 4.
-The TMA milestones of this model delimit the phases used in step 2
-(enhance_active_days.py). As a robustness check, the script verifies that all
-TMA milestones remain in the Pass model at noise thresholds 0.0, 0.1 and 0.2.
-
-Outputs (results/enhancement/)
-------------------------------
-  enriched_log_<course>.csv
-  pass_model_<course>.png            Petri net of the Pass model (noise 0.2)
-  pass_model_trees.txt               process trees, all thresholds
-  milestone_check.csv                TMA milestones present per threshold
-"""
+"""Chapter 6, step 1: builds the enriched event log (day-level timestamps,
+repetitions not collapsed, non-banked submissions as milestones) and discovers
+the Pass model (Inductive Miner, noise 0.2; milestones checked at 0.0-0.2).
+Output: results/enhancement/"""
 
 import os
 import sys
@@ -38,11 +11,8 @@ from pathlib import Path
 import pandas as pd
 import pm4py
 
-# ----------------------------------------------------------------------------
-# CONFIGURATION
-# ----------------------------------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = None      # e.g. Path(r"C:\Users\Alex\Desktop\thesis_oulad\data\raw")
+RAW_DIR = None     
 OUT_DIR = REPO_ROOT / "results" / "enhancement"
 
 COURSES = [("AAA", "2014J"), ("BBB", "2013J")]
@@ -52,9 +22,7 @@ CHECK_NOISE = [0.0, 0.1, 0.2]             # robustness check of the milestones
 BASE_DATE = dt.datetime(2014, 1, 1)       # synthetic day 0 (pm4py needs dates)
 CHUNK_SIZE = 2_000_000
 
-# ----------------------------------------------------------------------------
-# Data
-# ----------------------------------------------------------------------------
+
 if RAW_DIR is None:
     hits = [p.parent for p in REPO_ROOT.rglob("studentInfo.csv") if "results" not in p.parts]
     if not hits:
@@ -125,9 +93,6 @@ def build_log(m, p):
     return log.drop(columns=["sort_priority", "rank_in_day"]), assess
 
 
-# ----------------------------------------------------------------------------
-# Main
-# ----------------------------------------------------------------------------
 check_rows, trees = [], []
 for m, p in COURSES:
     course = f"{m}-{p}"

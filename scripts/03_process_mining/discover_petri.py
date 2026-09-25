@@ -3,10 +3,7 @@ import pm4py
 import pickle
 import os
 
-# Πείραμα σύγκρισης: discovery ΧΩΡΙΣ noise threshold, για το ενδεικτικό μάθημα
-# AAA-2014J. Χρησιμοποιείται στο Κεφάλαιο 4 για να δικαιολογήσει την επιλογή
-# noise_threshold=0.2 στο production script (discover_all.py), συγκρίνοντας
-# το μέγεθος/πολυπλοκότητα του μοντέλου με και χωρίς φιλτράρισμα θορύβου.
+# Inductive Miner without noise filtering, AAA-2014J (unfiltered models, Table 8).
 
 MODULE, PRES = "AAA", "2014J"
 
@@ -27,7 +24,7 @@ for outcome in ["Pass", "Fail"]:
         "week": "time:timestamp"
     })
     sub["case:concept:name"] = sub["case:concept:name"].astype(str)
-    # Φτιάχνουμε ψεύτικο αλλά έγκυρο timestamp από τον αριθμό εβδομάδας
+    # synthetic timestamp from the week number
     sub["time:timestamp"] = pd.to_datetime("2014-01-01") + pd.to_timedelta(sub["time:timestamp"] * 7, unit="D")
 
     log = pm4py.format_dataframe(sub, case_id="case:concept:name",
@@ -35,7 +32,7 @@ for outcome in ["Pass", "Fail"]:
                                   timestamp_key="time:timestamp")
     event_log = pm4py.convert_to_event_log(log)
 
-    net, im, fm = pm4py.discover_petri_net_inductive(event_log)  # χωρίς noise_threshold
+    net, im, fm = pm4py.discover_petri_net_inductive(event_log)  # no noise threshold
     print(f"--- {outcome} (no noise filtering) ---")
     print("Θέσεις (places):", len(net.places), " Μεταβάσεις (transitions):", len(net.transitions))
 

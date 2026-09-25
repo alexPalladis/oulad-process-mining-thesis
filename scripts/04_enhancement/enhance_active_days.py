@@ -1,53 +1,7 @@
-"""
-enhance_active_days.py  --  Chapter 6, step 2 of 2
-
-Enhances the milestone model of step 1 with one performance measure:
-the number of ACTIVE DAYS of each student in each phase of the course.
-
-Phases
-------
-The TMA milestones of the Pass model (step 1) delimit the phases:
-  phase 1 = days 0 .. deadline(TMA1)
-  phase j = deadline(TMA j-1) + 1 .. deadline(TMA j)
-Deadlines are taken from assessments.csv. Pre-course days (< 0) are excluded.
-
-Population
-----------
-Pass, Fail and Withdrawn students with at least one event in the enriched log
-(>= 1 VLE click or >= 1 non-banked submission). A student enters a phase only
-if registered for the whole phase:
-  date_registration <= phase end (or missing) AND
-  date_unregistration >= phase end (or missing).
-
-Measure
--------
-  active_days = number of distinct days in the phase with >= 1 VLE click
-  (daily resolution, studentVle.csv).
-
-Statistics
-----------
-Pass vs Fail and Withdrawn vs Fail in every phase: two-sided Mann-Whitney U,
-Cliff's delta (positive = first group more active days), Holm correction over
-all tests of the same course.
-
-Supplementary (not part of the main analysis; reported in one sentence)
-----------------------------------------------------------------------
-Two timing measures were also examined and are written to a separate file
-so that the corresponding statement in the text is reproducible:
-  days_to_first_activity = first active day in the phase minus phase start
-  last7_share            = share of the phase's clicks in the last 7 days
-                           before the deadline
-Both are defined only for students active in the phase; same tests, with a
-separate Holm correction per course.
-
-Outputs (results/enhancement/)
-------------------------------
-  active_days_per_student_<course>.csv   one row per student x phase
-  active_days_descriptives.csv           n, % inactive, median per group/phase
-  active_days_tests.csv                  main table of Chapter 6
-  active_days_per_phase.png              main figure of Chapter 6
-  supplementary_timing_tests.csv
-"""
+"""Chapter 6, step 2: active days per student and phase (phases delimited by TMA
+deadlines; students included only if registered for the whole phase).
+Pass vs Fail and Withdrawn vs Fail: Mann-Whitney U, Cliff's delta, Holm per course.
+Output: results/enhancement/"""
 
 import os
 import sys
@@ -60,11 +14,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-# ----------------------------------------------------------------------------
-# CONFIGURATION
-# ----------------------------------------------------------------------------
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = None      # e.g. Path(r"C:\Users\Alex\Desktop\thesis_oulad\data\raw")
+RAW_DIR = None      
 OUT_DIR = REPO_ROOT / "results" / "enhancement"
 
 COURSES = [("AAA", "2014J"), ("BBB", "2013J")]
@@ -72,14 +24,12 @@ GROUPS = ["Pass", "Fail", "Withdrawn"]
 PAIRS = [("Pass", "Fail"), ("Withdrawn", "Fail")]
 LAST_DAYS = 7
 ALPHA = 0.05
-MIN_N = 5                                 # minimum group size for a test
+MIN_N = 5                               
 CHUNK_SIZE = 2_000_000
 COLORS = {"Pass": "#2b6cb0", "Fail": "#c53030", "Withdrawn": "#718096"}
 MARKERS = {"Pass": "o", "Fail": "s", "Withdrawn": "^"}
 
-# ----------------------------------------------------------------------------
-# Data
-# ----------------------------------------------------------------------------
+
 if RAW_DIR is None:
     hits = [p.parent for p in REPO_ROOT.rglob("studentInfo.csv") if "results" not in p.parts]
     if not hits:
@@ -106,9 +56,6 @@ def in_course(df, m, p):
     return df[(df.code_module == m) & (df.code_presentation == p)]
 
 
-# ----------------------------------------------------------------------------
-# Statistics helpers
-# ----------------------------------------------------------------------------
 def compare(x, y):
     """Mann-Whitney U (two-sided) and Cliff's delta = 2U/(n1*n2) - 1."""
     if len(x) < MIN_N or len(y) < MIN_N:
@@ -148,9 +95,6 @@ def run_tests(phases, measures, course):
     return t
 
 
-# ----------------------------------------------------------------------------
-# Main
-# ----------------------------------------------------------------------------
 desc, main_tests, supp_tests, profiles = [], [], [], {}
 
 for m, p in COURSES:
@@ -209,9 +153,7 @@ for m, p in COURSES:
     main_tests.append(run_tests(phases, ["active_days"], course))
     supp_tests.append(run_tests(phases, ["days_to_first_activity", "last7_share"], course))
 
-# ----------------------------------------------------------------------------
-# Outputs
-# ----------------------------------------------------------------------------
+
 pd.DataFrame(desc).to_csv(OUT_DIR / "active_days_descriptives.csv", index=False)
 mt = pd.concat(main_tests, ignore_index=True).drop(columns="measure")
 mt.to_csv(OUT_DIR / "active_days_tests.csv", index=False)

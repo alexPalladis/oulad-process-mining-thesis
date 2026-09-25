@@ -1,26 +1,6 @@
-"""
-check_ch3_censoring.py  --  robustness check for Section 3.4 (Withdrawn vs Fail)
-
-Question: Withdrawn students are enrolled for fewer weeks than Fail students,
-so their lower TOTAL clicks (Section 3.4) could partly reflect shorter
-exposure rather than lower engagement. This script repeats the Withdrawn vs
-Fail comparison in all 22 course presentations with two measures:
-
-  (a) total_clicks      all clicks of the student in studentVle.csv
-                        (intended to replicate the Section 3.4 measure)
-  (b) clicks_per_week   clicks from day 0 to the end of the student's
-                        enrolment, divided by the number of enrolled weeks.
-                        End of enrolment = date_unregistration for Withdrawn,
-                        module_presentation_length (courses.csv) otherwise.
-
-Students without any VLE click are excluded (as in Section 3.4, to be
-confirmed against control_flow_pairwise.py). Withdrawn students who
-unregistered on or before day 0 have no enrolled time in the course and are
-excluded from (b); their number is reported.
-
-Tests: two-sided Mann-Whitney U and Cliff's delta (positive = Withdrawn higher).
-Output: results/statistics/ch3_censoring_check.csv
-"""
+"""Robustness check for Section 3.4.1: Withdrawn vs Fail on total clicks and on
+clicks per enrolled week, in all 22 course presentations.
+Output: results/statistics/ch3_censoring_check.csv"""
 
 import os
 import sys
@@ -31,7 +11,7 @@ import pandas as pd
 from scipy.stats import mannwhitneyu
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-RAW_DIR = None      # e.g. Path(r"C:\Users\Alex\Desktop\thesis_oulad\data\raw")
+RAW_DIR = None    
 OUT_FILE = REPO_ROOT / "results" / "statistics" / "ch3_censoring_check.csv"
 CHUNK_SIZE = 2_000_000
 
@@ -49,7 +29,6 @@ reg = pd.read_csv(RAW_DIR / "studentRegistration.csv", na_values=["?", ""])
 courses = pd.read_csv(RAW_DIR / "courses.csv")
 keys = ["code_module", "code_presentation", "id_student"]
 
-# per-student totals, streamed from studentVle.csv
 tot, enr = [], []
 st = info.merge(reg, on=keys, how="left").merge(
     courses, on=["code_module", "code_presentation"])

@@ -1,25 +1,6 @@
-"""
-Cliff's delta και για τις ΤΡΕΙΣ οπτικές (control-flow, organizational, performance),
-ώστε η σύγκριση του RQ2 να γίνεται με το ίδιο μέτρο.
-
-Τρέξε το από τον φάκελο scripts/01_statistics, όπως και τα υπόλοιπα scripts:
-    python effect_sizes_3perspectives.py
-
-Δεν αλλάζει κανένα από τα υπάρχοντα αποτελέσματα· γράφει ΝΕΟ αρχείο:
-    results/statistics/effect_sizes_3perspectives.csv
-
-Στήλες εξόδου (ανά μάθημα):
-  delta_total        : Cliff's δ συνολικών clicks (ίδιο με control_flow.py)
-  delta_forum_users  : Cliff's δ forum clicks, ΜΟΝΟ φοιτητές με >=1 forum click
-                       (ίδιος πληθυσμός με organizational.py)
-  delta_forum_all    : Cliff's δ forum clicks, ΟΛΟΙ οι φοιτητές με >=1 VLE click
-                       (όσοι δεν μπήκαν ποτέ στο forum μετράνε με 0)
-  delta_forum_share  : Cliff's δ του ΠΟΣΟΣΤΟΥ των clicks που πήγαν στο forum
-                       (>0: οι Pass αφιερώνουν μεγαλύτερο μερίδιο στο forum)
-  delta_first_sub    : Cliff's δ ημέρας πρώτης υποβολής (ίδιος πληθυσμός με performance.py)
-                       (ΑΡΝΗΤΙΚΟ = οι Pass υποβάλλουν νωρίτερα)
-Σε όλα: δ = Pass έναντι Fail.
-"""
+"""Cliff's delta for the three perspectives (Section 3.3), Pass vs Fail per course.
+Forum clicks are computed for all students with >= 1 VLE click (non-users = 0).
+Output: results/statistics/effect_sizes_3perspectives.csv"""
 import os
 import pandas as pd
 from scipy.stats import rankdata
@@ -58,7 +39,6 @@ for module, pres in courses:
     ev = svle_c.merge(vle_c[["id_site", "activity_type"]], on="id_site", how="left")
     ev = ev.merge(info_c[["id_student", "final_result"]], on="id_student", how="inner")
 
-    # ---- συνολικά και forum clicks ανά φοιτητή (όλοι με >=1 VLE click) ----
     ev["forum_click"] = ev["sum_click"].where(ev.activity_type == "forumng", 0)
     ps = ev.groupby(["id_student", "final_result"])[["sum_click", "forum_click"]].sum().reset_index()
     ps["forum_share"] = ps["forum_click"] / ps["sum_click"]
@@ -67,9 +47,8 @@ for module, pres in courses:
     if len(P) < 5 or len(F) < 5:
         continue
 
-    Pu, Fu = P[P.forum_click > 0], F[F.forum_click > 0]   # πληθυσμός του organizational.py
+    Pu, Fu = P[P.forum_click > 0], F[F.forum_click > 0]   # same population as organizational.py
 
-    # ---- performance: ίδια λογική με performance.py ----
     a_c = assessments[(assessments.code_module == module) & (assessments.code_presentation == pres)]
     sa = studentAssessment.merge(a_c[["id_assessment"]], on="id_assessment", how="inner")
     first = sa.groupby("id_student")["date_submitted"].min().reset_index()

@@ -1,7 +1,6 @@
 import pandas as pd
 import os
 
-# --- Ρυθμίσεις διαδρομών (τρέξε το από scripts/02_eventlog/) ---
 RAW = "../../data/raw"
 OUT = "../../data/processed"
 os.makedirs(OUT, exist_ok=True)
@@ -25,7 +24,7 @@ for module, pres in courses:
 
     ev = svle_c.merge(vle_c[["id_site", "activity_type"]], on="id_site", how="left")
     ev = ev.merge(info_c[["id_student", "final_result"]], on="id_student", how="inner")
-    # Κρατάμε ΟΛΕΣ τις 4 ομάδες εδώ (Distinction/Pass/Withdrawn/Fail), όχι μόνο Pass/Fail
+    # keep all four outcome groups
     ev["week"] = ev["date"] // 7
 
     weekly = (ev.groupby(["id_student", "final_result", "activity_type", "week"])

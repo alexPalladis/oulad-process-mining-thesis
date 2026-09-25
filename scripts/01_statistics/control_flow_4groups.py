@@ -35,7 +35,6 @@ for module, pres in courses:
                 "median_clicks": round(vals.median(), 1),
             })
 
-    # Kruskal-Wallis μεταξύ και των 4 ομάδων (αν έχουν αρκετό δείγμα)
     valid = [groups_data[g] for g in GROUPS if len(groups_data[g]) >= 5]
     if len(valid) == 4:
         stat, p = kruskal(*valid)

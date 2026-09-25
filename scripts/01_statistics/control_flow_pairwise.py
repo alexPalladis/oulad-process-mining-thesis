@@ -19,7 +19,6 @@ svle = pd.read_csv(f"{RAW}/studentVle.csv")
 
 courses = info[["code_module", "code_presentation"]].drop_duplicates().values.tolist()
 
-# Τα πιο ενδιαφέροντα ζεύγη
 PAIRS = [("Distinction", "Fail"), ("Withdrawn", "Fail"), ("Distinction", "Withdrawn")]
 
 results = []
