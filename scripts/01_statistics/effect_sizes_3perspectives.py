@@ -26,6 +26,7 @@ svle = pd.read_csv(f"{RAW}/studentVle.csv",
                    usecols=["code_module", "code_presentation", "id_student", "id_site", "sum_click"])
 assessments = pd.read_csv(f"{RAW}/assessments.csv")
 studentAssessment = pd.read_csv(f"{RAW}/studentAssessment.csv")
+studentAssessment = studentAssessment[studentAssessment.is_banked == 0]  # banked = carried over from a previous presentation
 
 courses = info[["code_module", "code_presentation"]].drop_duplicates().values.tolist()
 rows = []
@@ -47,7 +48,7 @@ for module, pres in courses:
     if len(P) < 5 or len(F) < 5:
         continue
 
-    Pu, Fu = P[P.forum_click > 0], F[F.forum_click > 0]   # same population as organizational.py
+    Pu, Fu = P[P.forum_click > 0], F[F.forum_click > 0] 
 
     a_c = assessments[(assessments.code_module == module) & (assessments.code_presentation == pres)]
     sa = studentAssessment.merge(a_c[["id_assessment"]], on="id_assessment", how="inner")
@@ -83,3 +84,6 @@ for col in ["delta_total", "delta_forum_users", "delta_forum_all", "delta_forum_
 print("\nΜαθήματα όπου |δ forum_all| > δ total:",
       int((res.delta_forum_all.abs() > res.delta_total.abs()).sum()), "/", len(res))
 print("Κατώφλια Romano: |δ|>=0.147 μικρό, >=0.33 μεσαίο, >=0.474 μεγάλο")
+a = res.delta_first_sub.dropna().abs()
+print("delta_first_sub: μεγάλο", (a >= 0.474).sum(), "| μεσαίο", ((a >= 0.33) & (a < 0.474)).sum(),
+      "| μικρό", ((a >= 0.147) & (a < 0.33)).sum(), "| αμελητέο", (a < 0.147).sum())
