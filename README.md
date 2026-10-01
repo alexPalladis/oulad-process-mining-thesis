@@ -2,11 +2,11 @@
 
 Companion repository for the MSc thesis:
 
-> **Behavioral Pattern Analysis of Students Using Process Mining Techniques: A Comparative Study of Successful and Unsuccessful Students, in Terms of Academic Performance, in Distance Learning Environments**
+> **Interaction Pattern Analysis of Students Using Process Mining Techniques: A Comparative Study of Successful and Unsuccessful Students, in Terms of Academic Performance, in Distance Learning Environments**
 > Alexandros Palladis — MSc in Software Engineering for Web and Mobile Applications, University of Thessaly
 > Supervisor: Vasileios Gerogiannis · Second reader: Ilias Sawas
 
-This repository contains the Python scripts used for data preprocessing, statistical analysis, process discovery, conformance checking, and performance-based enhancement reported in the thesis. It is provided to support the transparency and reproducibility of the results.
+This repository contains the Python scripts used for data preprocessing, statistical analysis, process discovery, conformance checking, and enhancement reported in the thesis. It is provided to support the reproducibility of the results.
 
 ---
 
@@ -16,7 +16,7 @@ This project uses the **Open University Learning Analytics Dataset (OULAD)**, a 
 
 **The raw dataset is not redistributed here.** Download it directly from the official source:
 
-📎 **https://analyse.kmi.open.ac.uk/open_dataset**
+📎 **[https://archive.ics.uci.edu/dataset/349/open+university+learning+analytics+dataset]**
 
 After downloading, place the seven CSV files in `data/raw/` before running any script.
 
@@ -144,7 +144,7 @@ The statistical analysis of Chapter 3 covers all 22 course presentations of OULA
 If you use this code, please cite the thesis:
 
 ```
-Palladis, A. (2026). Behavioral Pattern Analysis of Students Using Process Mining Techniques:
+Palladis, A. (2026). Interaction Pattern Analysis of Students Using Process Mining Techniques:
 A Comparative Study of Successful and Unsuccessful Students, in Terms of Academic Performance,
 in Distance Learning Environments. MSc thesis, University of Thessaly.
 ```
