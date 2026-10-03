@@ -4,7 +4,7 @@ Companion repository for the MSc thesis:
 
 > **Interaction Pattern Analysis of Students Using Process Mining Techniques: A Comparative Study of Successful and Unsuccessful Students, in Terms of Academic Performance, in Distance Learning Environments**
 > Alexandros Palladis — MSc in Software Engineering for Web and Mobile Applications, University of Thessaly
-> Supervisor: Vasileios Gerogiannis · Second reader: Ilias Sawas
+> Supervisor: Vasileios Gerogiannis
 
 This repository contains the Python scripts used for data preprocessing, statistical analysis, process discovery, conformance checking, and enhancement reported in the thesis. It is provided to support the reproducibility of the results.
 
